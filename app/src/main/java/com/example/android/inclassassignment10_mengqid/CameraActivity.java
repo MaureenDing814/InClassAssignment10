@@ -7,18 +7,29 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.R.attr.data;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -27,12 +38,15 @@ public class CameraActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private File photoFile;
+    private StorageReference mStorageRef;
+    private Uri fileToUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         imageView = (ImageView) findViewById(R.id.image);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     public void takePhoto(View view) {
@@ -78,18 +92,21 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode != RESULT_OK)
             return;
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
             try {
-                decodeUri(Uri.parse(photoFile.toURI().toString()));
+                fileToUpload = Uri.parse(photoFile.toURI().toString());
+                decodeUri(fileToUpload);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         } else if (requestCode == REQUEST_PICK_PHOTO) {
             try {
-                decodeUri(data.getData());
+                fileToUpload = data.getData();
+                decodeUri(fileToUpload);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -120,5 +137,29 @@ public class CameraActivity extends AppCompatActivity {
 
         Bitmap image = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, bmOptions);
         imageView.setImageBitmap(image);
+        Button upload = (Button)findViewById(R.id.upload);
+        upload.setVisibility(View.VISIBLE);
     }
-}
+
+    public void upload(View view){
+        StorageReference riversRef = mStorageRef.child("images/upload.jpg");
+
+
+// Register observers to listen for when the download is done or if it fails
+        riversRef.putFile(fileToUpload)
+                .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(CameraActivity.this, "Upload unsuccessful", Toast.LENGTH_SHORT).show();
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(CameraActivity.this,"Upload successful", Toast.LENGTH_SHORT).show();
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
+
+}}

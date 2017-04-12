@@ -30,5 +30,12 @@
         android:scaleType="fitCenter"
         android:id="@+id/image"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="upload"
+        android:text="upload"
+        android:id="@+id/upload"/>
+
 
 </LinearLayout>
