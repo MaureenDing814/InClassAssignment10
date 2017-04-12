@@ -17,7 +17,6 @@ import java.util.StringTokenizer;
 public class ObjectActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
-    DatabaseReference postRef;
     DatabaseReference postsRef;
 
     @Override
@@ -26,7 +25,6 @@ public class ObjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_object);
 
         database = FirebaseDatabase.getInstance();
-        postRef = database.getReference("post");
         postsRef = database.getReference("posts");
     }
 
@@ -41,7 +39,6 @@ public class ObjectActivity extends AppCompatActivity {
 
         BlogPost post = new BlogPost(title, body, time);
 
-        postRef.setValue(post);
         postsRef.push().setValue(post);
         //push: generate an unique ID for the item, and save it in that branch. Add objects in a list.
 

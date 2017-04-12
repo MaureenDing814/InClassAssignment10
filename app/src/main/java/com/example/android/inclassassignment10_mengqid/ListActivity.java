@@ -22,7 +22,7 @@ public class ListActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference postRef;
-    DatabaseReference postsRef;
+
     ArrayList<BlogPost> posts;
 
     @Override
@@ -31,14 +31,13 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         database = FirebaseDatabase.getInstance();
-        postRef = database.getReference("post");
-        postsRef = database.getReference("posts");
+        postRef = database.getReference("posts");
 
         posts = new ArrayList<>();
 
         display = (TextView) findViewById(R.id.display);
 
-        postsRef.addChildEventListener(new ChildEventListener() {
+        postRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 BlogPost post = dataSnapshot.getValue(BlogPost.class);
