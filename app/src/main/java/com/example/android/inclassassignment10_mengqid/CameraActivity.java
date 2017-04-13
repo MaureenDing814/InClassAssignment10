@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -97,20 +98,19 @@ public class CameraActivity extends AppCompatActivity {
             return;
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
-            try {
                 fileToUpload = Uri.parse(photoFile.toURI().toString());
-                decodeUri(fileToUpload);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
-        } else if (requestCode == REQUEST_PICK_PHOTO) {
-            try {
+        else if (requestCode == REQUEST_PICK_PHOTO) {
                 fileToUpload = data.getData();
-                decodeUri(fileToUpload);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
-        }
+        Picasso.with(this)
+                .load(fileToUpload)
+                .resize(imageView.getWidth(),imageView.getHeight())
+                .centerInside()
+                .into(imageView);
+        // Use picasso library to show the image in this activity.
+        //resize: feature that can help with resizing the image
+        // before you call a method(before .), you can change the line
     }
 
     public void decodeUri(Uri uri) throws FileNotFoundException {
