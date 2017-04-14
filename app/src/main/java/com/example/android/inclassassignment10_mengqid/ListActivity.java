@@ -23,7 +23,6 @@ public class ListActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    TextView display;
 
     FirebaseDatabase database;
     DatabaseReference postRef;
@@ -83,6 +82,5 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
-        display.setVisibility(View.VISIBLE);
     }
 }
