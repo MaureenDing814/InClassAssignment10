@@ -1,12 +1,15 @@
 package com.example.android.inclassassignment10_mengqid;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by Maureen_Ding on 4/5/17.
  */
 
-public class BlogPost {
+public class BlogPost implements Serializable {
     String title;
     String body;
     String time;

@@ -1,5 +1,7 @@
 package com.example.android.inclassassignment10_mengqid;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private ArrayList<BlogPost> mDataset;
+    Context mContext;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -28,19 +31,23 @@ import java.util.ArrayList;
             public TextView mTitle;
             public TextView mTime;
             public TextView mBody;
+            public View myView;
 
-            public ViewHolder(View v) {
-                super(v);
+
+            public ViewHolder(View item) {
+                super(item);
                 //v: Linear Layout
                 mTitle = (TextView)v.findViewById(R.id.title);
                 mTime = (TextView)v.findViewById(R.id.time);
                 mBody = (TextView)v.findViewById(R.id.body);
+                mView = item;
             }
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(ArrayList<BlogPost> myDataset) {
+        public MyAdapter(ArrayList<BlogPost> myDataset, Context context) {
             mDataset = myDataset;
+            mContext = context;
         }
 
         // Create new views (invoked by the layout manager)
@@ -58,12 +65,22 @@ import java.util.ArrayList;
 
         // Replace the contents of a view (invoked by the layout manager)
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             holder.mTitle.setText(mDataset.get(position).getTitle());
             holder.mTime.setText(mDataset.get(position).toReadableTime());
             holder.mBody.setText(mDataset.get(position).getBody());
+            holder.mTitle.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick (View v)
+                {
+                    Intent intent = new Intent (mContext, DetailActivity.class);
+                    intent.putExtra("A Blogpost", mDataset.get(holder.getAdapterPosition()));
+                    mContext.startActivity(intent);
+                }
+            });
 
         }
 
